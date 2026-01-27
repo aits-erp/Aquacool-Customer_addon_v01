@@ -5,6 +5,16 @@ app_description = "customer doc additional fields and tables"
 app_email = "nikhil@aitsind.com"
 app_license = "mit"
 
+doctype_js = {
+    "Customer": "public/js/customer.js"
+}
+
+doc_events = {
+    "Customer": {
+        "validate": "customer_addon.overrides.customer.validate"
+    }
+}
+
 # Apps
 # ------------------
 

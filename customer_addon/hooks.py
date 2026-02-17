@@ -6,7 +6,8 @@ app_email = "nikhil@aitsind.com"
 app_license = "mit"
 
 doctype_js = {
-    "Customer": "public/js/customer.js"
+    "Customer": "public/js/customer.js",
+    "Sales Order": "public/js/sales_order.js"
 }
 
 doc_events = {
@@ -17,12 +18,21 @@ doc_events = {
 
 fixtures = [
     {
-        "dt": "Custom Field",
+        "doctype": "Custom Field",
         "filters": [
-            ["dt", "in", ["Customer"]]
+            ["module", "=", "customer addon"]
         ]
     }
 ]
+
+# fixtures = [
+#     {
+#         "dt": "Custom Field",
+#         "filters": [
+#             ["dt", "in", ["Customer"]]
+#         ]
+#     }
+# ]
 
 # Apps
 # ------------------

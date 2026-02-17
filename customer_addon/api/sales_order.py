@@ -5,7 +5,9 @@ import json
 @frappe.whitelist()
 def get_customer_assets(customer, filters=None):
 
-    # Convert filters safely
+    # -----------------------------
+    # Safe JSON parsing
+    # -----------------------------
     if isinstance(filters, str):
         try:
             filters = json.loads(filters)
@@ -14,10 +16,23 @@ def get_customer_assets(customer, filters=None):
 
     filters = filters or {}
 
-    conditions = {"parent": customer}
+    # -----------------------------
+    # Base condition (important)
+    # -----------------------------
+    conditions = {
+        "parent": customer
+    }
 
+    # -----------------------------
+    # Multi-select Location support
+    # -----------------------------
+    if filters.get("location"):
+        conditions["location"] = ["in", filters.get("location")]
+
+    # -----------------------------
+    # Normal filters
+    # -----------------------------
     for key in [
-        "location",
         "sub_location",
         "custom_item_group",
         "custom_item_code",
@@ -27,6 +42,9 @@ def get_customer_assets(customer, filters=None):
         if filters.get(key):
             conditions[key] = filters.get(key)
 
+    # -----------------------------
+    # Fetch records
+    # -----------------------------
     return frappe.get_all(
         "Customer Installed Asset",
         filters=conditions,
@@ -42,5 +60,6 @@ def get_customer_assets(customer, filters=None):
             "start_date",
             "end_date",
             "warrenty"
-        ]
+        ],
+        limit_page_length=1000
     )

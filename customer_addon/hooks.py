@@ -5,6 +5,8 @@ app_description = "customer doc additional fields and tables"
 app_email = "nikhil@aitsind.com"
 app_license = "mit"
 
+app_include_css = "/assets/customer_addon/css/dialog.css"
+
 doctype_js = {
     "Customer": "public/js/customer.js",
     "Sales Order": "public/js/sales_order.js"

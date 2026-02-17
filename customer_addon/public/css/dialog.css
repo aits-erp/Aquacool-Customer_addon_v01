@@ -1,0 +1,11 @@
+.frappe-control[data-fieldname="location"] .awesomplete {
+    min-height: 36px;
+}
+
+.modal-dialog .form-control {
+    height: 34px;
+}
+
+.datatable {
+    font-size: 13px;
+}

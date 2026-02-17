@@ -18,7 +18,8 @@
   "amc",
   "start_date",
   "end_date",
-  "warrenty"
+  "warrenty",
+  "warranty_date"
  ],
  "fields": [
   {
@@ -100,15 +101,20 @@
   {
    "fieldname": "warrenty",
    "fieldtype": "Select",
-   "label": "Warrenty",
+   "label": "Warranty",
    "options": "\nYes\nNo"
+  },
+  {
+   "fieldname": "warranty_date",
+   "fieldtype": "Date",
+   "label": "Warranty Date"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-02-17 10:05:07.283759",
+ "modified": "2026-02-17 15:28:27.848197",
  "modified_by": "Administrator",
  "module": "customer addon",
  "name": "Customer Installed Asset",

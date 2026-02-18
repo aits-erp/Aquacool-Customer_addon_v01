@@ -29,7 +29,6 @@
   "territory",
   "customer_group",
   "company",
-  "amended_from",
   "amended_from"
  ],
  "fields": [
@@ -98,7 +97,7 @@
    "label": "Items",
    "oldfieldname": "item_maintenance_detail",
    "oldfieldtype": "Table",
-   "options": "Maintenance Schedule Item",
+   "options": "Custom Maintenance Schedule Item",
    "reqd": 1
   },
   {
@@ -233,10 +232,9 @@
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Custom Maintenance Schedule",
+   "options": "Maintenance Schedule",
    "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
+   "read_only": 1
   }
  ],
  "icon": "fa fa-calendar",
@@ -248,7 +246,7 @@
    "link_fieldname": "maintenance_schedule"
   }
  ],
- "modified": "2026-02-17 13:22:27.321958",
+ "modified": "2026-02-18 06:26:27.972644",
  "modified_by": "Administrator",
  "module": "customer addon",
  "name": "Custom Maintenance Schedule",

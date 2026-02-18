@@ -28,8 +28,7 @@
   "address_display",
   "territory",
   "customer_group",
-  "company",
-  "amended_from"
+  "company"
  ],
  "fields": [
   {
@@ -119,7 +118,7 @@
    "label": "Schedules",
    "oldfieldname": "schedules",
    "oldfieldtype": "Table",
-   "options": "Maintenance Schedule Detail"
+   "options": "Sales Order Installed Asset"
   },
   {
    "fieldname": "contact_info",
@@ -217,24 +216,6 @@
    "options": "Company",
    "remember_last_selected_value": 1,
    "reqd": 1
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Maintenance Schedule",
-   "print_hide": 1,
-   "read_only": 1
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Maintenance Schedule",
-   "print_hide": 1,
-   "read_only": 1
   }
  ],
  "icon": "fa fa-calendar",
@@ -246,7 +227,7 @@
    "link_fieldname": "maintenance_schedule"
   }
  ],
- "modified": "2026-02-18 06:26:27.972644",
+ "modified": "2026-02-18 17:14:28.821512",
  "modified_by": "Administrator",
  "module": "customer addon",
  "name": "Custom Maintenance Schedule",

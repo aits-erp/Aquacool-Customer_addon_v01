@@ -8,6 +8,7 @@
  "field_order": [
   "customer_details",
   "column_break0",
+  "service_call_no",
   "naming_series",
   "customer",
   "customer_name",
@@ -37,8 +38,7 @@
   "contact_person",
   "col_break4",
   "territory",
-  "customer_group",
-  "amended_from"
+  "customer_group"
  ],
  "fields": [
   {
@@ -294,18 +294,27 @@
   {
    "fieldname": "amended_from",
    "fieldtype": "Link",
+   "ignore_user_permissions": 1,
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Service Call",
+   "oldfieldname": "amended_from",
+   "oldfieldtype": "Data",
+   "options": "Maintenance Visit",
    "print_hide": 1,
    "read_only": 1,
-   "search_index": 1
+   "width": "150px"
+  },
+  {
+   "fieldname": "service_call_no",
+   "fieldtype": "Data",
+   "label": "Service Call No.",
+   "reqd": 1
   }
  ],
  "icon": "fa fa-file-text",
  "is_submittable": 1,
  "links": [],
- "modified": "2026-02-17 13:26:00.349015",
+ "modified": "2026-02-18 16:37:36.585679",
  "modified_by": "Administrator",
  "module": "customer addon",
  "name": "Service Call",

@@ -1,0 +1,163 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-02-18 12:27:09.111347",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "customer_information_section",
+  "customer",
+  "customer_visiting_address",
+  "customer_contact_number",
+  "visit_details_section",
+  "visit_datetime",
+  "visiting_purpose",
+  "visited_by",
+  "column_break_cyhc",
+  "checkin",
+  "check_in_date_and_time",
+  "checkout",
+  "check_out_date_and_time",
+  "visit_status",
+  "location_details_section",
+  "latitude",
+  "longitude",
+  "google_map_url"
+ ],
+ "fields": [
+  {
+   "fieldname": "customer_information_section",
+   "fieldtype": "Section Break",
+   "label": "Customer Information"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Customer",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer_visiting_address",
+   "fieldtype": "Link",
+   "label": "Customer Visiting Address",
+   "options": "Address"
+  },
+  {
+   "fieldname": "customer_contact_number",
+   "fieldtype": "Data",
+   "label": "Customer Contact Number"
+  },
+  {
+   "fieldname": "visit_details_section",
+   "fieldtype": "Section Break",
+   "label": "Visit Details"
+  },
+  {
+   "fieldname": "visit_datetime",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Visit Datetime",
+   "reqd": 1
+  },
+  {
+   "fieldname": "visiting_purpose",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Visiting Purpose",
+   "reqd": 1
+  },
+  {
+   "default": "frappe.session.user",
+   "fieldname": "visited_by",
+   "fieldtype": "Link",
+   "label": "Visited By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "location_details_section",
+   "fieldtype": "Section Break",
+   "label": "Location Details"
+  },
+  {
+   "fieldname": "latitude",
+   "fieldtype": "Data",
+   "label": "Latitude"
+  },
+  {
+   "fieldname": "longitude",
+   "fieldtype": "Data",
+   "label": "Longitude"
+  },
+  {
+   "fieldname": "google_map_url",
+   "fieldtype": "Data",
+   "label": "Google Map URL",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_cyhc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "checkin",
+   "fieldtype": "Button",
+   "label": "Checkin"
+  },
+  {
+   "fieldname": "check_in_date_and_time",
+   "fieldtype": "Datetime",
+   "label": "Check In Date and Time"
+  },
+  {
+   "fieldname": "checkout",
+   "fieldtype": "Button",
+   "label": "CheckOut"
+  },
+  {
+   "fieldname": "check_out_date_and_time",
+   "fieldtype": "Datetime",
+   "label": "Check Out Date and Time"
+  },
+  {
+   "fieldname": "visit_status",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Visit Status",
+   "options": "Not Checked In\nChecked In\nChecked Out",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-02-18 16:57:09.083915",
+ "modified_by": "Administrator",
+ "module": "customer addon",
+ "name": "Customer Visit Report",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

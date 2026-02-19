@@ -22,7 +22,8 @@
   "location_details_section",
   "latitude",
   "longitude",
-  "google_map_url"
+  "google_map_url",
+  "amended_from"
  ],
  "fields": [
   {
@@ -32,17 +33,16 @@
   },
   {
    "fieldname": "customer",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Customer",
-   "options": "Customer",
    "reqd": 1
   },
   {
    "fieldname": "customer_visiting_address",
-   "fieldtype": "Link",
+   "fieldtype": "Small Text",
    "label": "Customer Visiting Address",
-   "options": "Address"
+   "reqd": 1
   },
   {
    "fieldname": "customer_contact_number",
@@ -74,7 +74,8 @@
    "fieldtype": "Link",
    "label": "Visited By",
    "options": "User",
-   "read_only": 1
+   "read_only": 1,
+   "reqd": 1
   },
   {
    "fieldname": "location_details_section",
@@ -128,13 +129,23 @@
    "label": "Visit Status",
    "options": "Not Checked In\nChecked In\nChecked Out",
    "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Customer Visit Report",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-02-18 16:57:09.083915",
+ "modified": "2026-02-19 15:16:11.305939",
  "modified_by": "Administrator",
  "module": "customer addon",
  "name": "Customer Visit Report",

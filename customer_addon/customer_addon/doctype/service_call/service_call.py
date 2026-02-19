@@ -1,9 +1,14 @@
-# Copyright (c) 2026, aits and contributors
-# For license information, please see license.txt
-
-# import frappe
+import frappe
 from frappe.model.document import Document
 
-
 class ServiceCall(Document):
-	pass
+
+    def validate(self):
+        if not self.status:
+            self.status = "Draft"
+
+    def on_submit(self):
+        self.status = "Completed"
+
+    def on_cancel(self):
+        self.status = "Cancelled"

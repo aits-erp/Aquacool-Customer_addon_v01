@@ -26,25 +26,24 @@ frappe.ui.form.on('Customer Visit Report', {
     // },
 
     checkin(frm) {
+        if (!frm.doc.longitude || !frm.doc.latitude) {
+            frappe.msgprint("Please fetch location before Checkin.");
+            return;
+        }
 
-    if (!frm.doc.google_map_url) {
-        frappe.msgprint("Please fetch location before Checkin.");
-        return;
-    }
+        if (frm.doc.check_in_date_and_time) {
+            frappe.msgprint("Already Checked In");
+            return;
+        }
 
-    if (frm.doc.check_in_date_and_time) {
-        frappe.msgprint("Already Checked In");
-        return;
-    }
+        if (frm.is_new()) {
+            frappe.msgprint("Please Save document before Checkin.");
+            return;
+        }
 
-    if (frm.is_new()) {
-        frappe.msgprint("Please Save document before Checkin.");
-        return;
-    }
-
-    frm.set_value("check_in_date_and_time", frappe.datetime.now_datetime());
-    frm.save();
-},
+        frm.set_value("check_in_date_and_time", frappe.datetime.now_datetime());
+        frm.save();
+    },
 
     checkout(frm) {
         if (!frm.doc.check_in_date_and_time) {

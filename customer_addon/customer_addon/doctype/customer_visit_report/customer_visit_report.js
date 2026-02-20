@@ -26,10 +26,6 @@ frappe.ui.form.on('Customer Visit Report', {
     // },
 
     checkin(frm) {
-        if (!frm.doc.longitude) {
-            frappe.msgprint("Please fetch location before Checkin.");
-            return;
-        }
 
         if (frm.doc.check_in_date_and_time) {
             frappe.msgprint("Already Checked In");

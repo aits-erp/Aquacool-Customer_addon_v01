@@ -26,7 +26,7 @@ frappe.ui.form.on('Customer Visit Report', {
     // },
 
     checkin(frm) {
-        if (!frm.doc.longitude || !frm.doc.latitude) {
+        if (!frm.doc.longitude) {
             frappe.msgprint("Please fetch location before Checkin.");
             return;
         }

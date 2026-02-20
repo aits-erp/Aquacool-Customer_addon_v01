@@ -24,8 +24,24 @@ fixtures = [
         "filters": [
             ["module", "=", "customer addon"]
         ]
+    },
+    {
+        "doctype": "Role",
+        "filters": [
+            ["name", "=", "Customer Visit User"]
+        ]
+    },
+    {
+        "doctype": "Custom DocPerm",
+        "filters": [
+            ["parent", "=", "Customer Visit Report"]
+        ]
     }
 ]
+
+permission_query_conditions = {
+    "Customer Visit Report": "customer_addon.permissions.get_customer_visit_permission_query"
+}
 
 # fixtures = [
 #     {

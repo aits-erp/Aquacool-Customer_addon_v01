@@ -27,7 +27,6 @@ def validate_installed_assets(doc):
         # ---------------------------
         dup_key = (
             row.location,
-            row.sub_location or "",
             row.custom_item_group,
             row.custom_item_code,
             row.model or "",

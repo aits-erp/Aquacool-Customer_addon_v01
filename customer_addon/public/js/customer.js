@@ -3,27 +3,24 @@
  **************************************/
 frappe.ui.form.on("Customer Installed Asset", {
 
-    // ------------------------------------
-    // LOCATION → SUB LOCATION
-    // ------------------------------------
     location(frm, cdt, cdn) {
-        const row = locals[cdt][cdn];
+    const row = locals[cdt][cdn];
 
-        row.sub_location = null;
-        row.sub_location_address = null;
-
-        frm.set_query(
-            "sub_location",
-            "custom_customer_installed_assets",
-            function () {
-                return {
-                    filters: {
-                        location: row.location
-                    }
-                };
+    // If you want to auto-fetch address from Customer Location
+    if (row.location) {
+        frappe.db.get_value(
+            "Customer Location",
+            row.location,
+            "description",   // fieldname stays same!
+            function (r) {
+                if (r && r.description) {
+                    row.sub_location_address = r.description;
+                    frm.refresh_field("custom_customer_installed_assets");
+                }
             }
         );
-    },
+    }
+},
 
     // ------------------------------------
     // ASSET GROUP → ASSET ITEM

@@ -20,9 +20,10 @@
   "check_out_date_and_time",
   "visit_status",
   "location_details_section",
-  "latitude",
+  "get_location",
+  "location",
   "longitude",
-  "google_map_url",
+  "latitude",
   "amended_from"
  ],
  "fields": [
@@ -69,7 +70,7 @@
    "reqd": 1
   },
   {
-   "default": "frappe.session.user",
+   "default": "__user",
    "fieldname": "visited_by",
    "fieldtype": "Link",
    "label": "Visited By",
@@ -85,17 +86,13 @@
   {
    "fieldname": "latitude",
    "fieldtype": "Data",
-   "label": "Latitude"
+   "label": "Latitude",
+   "read_only": 1
   },
   {
    "fieldname": "longitude",
    "fieldtype": "Data",
-   "label": "Longitude"
-  },
-  {
-   "fieldname": "google_map_url",
-   "fieldtype": "Data",
-   "label": "Google Map URL",
+   "label": "Longitude",
    "read_only": 1
   },
   {
@@ -139,13 +136,24 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "get_location",
+   "fieldtype": "Button",
+   "label": "Get Current Location"
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Geolocation",
+   "label": "Google Map URL",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-02-19 15:16:11.305939",
+ "modified": "2026-02-20 23:50:01.350049",
  "modified_by": "Administrator",
  "module": "customer addon",
  "name": "Customer Visit Report",
@@ -160,6 +168,19 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Customer Visit User",
    "share": 1,
    "submit": 1,
    "write": 1

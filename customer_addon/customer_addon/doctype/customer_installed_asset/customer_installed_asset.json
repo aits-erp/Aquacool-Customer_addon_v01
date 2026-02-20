@@ -7,8 +7,6 @@
  "engine": "InnoDB",
  "field_order": [
   "location",
-  "sub_location",
-  "sub_location_address",
   "custom_item_group",
   "custom_item_code",
   "model",
@@ -29,18 +27,6 @@
    "label": "Location",
    "options": "Customer Location",
    "reqd": 1
-  },
-  {
-   "fieldname": "sub_location",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Sub Location",
-   "options": "Customer Sub Location"
-  },
-  {
-   "fieldname": "sub_location_address",
-   "fieldtype": "Small Text",
-   "label": "Sub Location Address"
   },
   {
    "fieldname": "custom_item_group",

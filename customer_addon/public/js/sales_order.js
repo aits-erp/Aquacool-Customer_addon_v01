@@ -9,127 +9,6 @@ frappe.ui.form.on("Sales Order", {
     }
 });
 
-
-// function open_maintenance_dialog(frm) {
-
-//     const dialog = new frappe.ui.Dialog({
-//         title: "Fetch Installed Assets",
-//         size: "extra-large",
-//         fields: [
-
-//             { fieldtype: "Section Break", label: "Filters" },
-
-//             {
-//                 fieldname: "location",
-//                 label: "Location",
-//                 fieldtype: "MultiSelectList",
-//                 get_data: function (txt) {
-//                     return frappe.db.get_link_options("Customer Location", txt);
-//                 },
-//                 columns: 2
-//             },
-//             {
-//                 fieldname: "sub_location",
-//                 label: "Sub Location",
-//                 fieldtype: "Link",
-//                 options: "Customer Sub Location",
-//                 columns: 2
-//             },
-//             {
-//                 fieldname: "custom_item_group",
-//                 label: "Item Group",
-//                 fieldtype: "Link",
-//                 options: "Customer Asset Group",
-//                 columns: 2
-//             },
-//             {
-//                 fieldname: "custom_item_code",
-//                 label: "Item Code",
-//                 fieldtype: "Link",
-//                 options: "Customer Asset Item",
-//                 columns: 2
-//             },
-//             {
-//                 fieldname: "model",
-//                 label: "Model",
-//                 fieldtype: "Link",
-//                 options: "Customer Asset Model",
-//                 columns: 2
-//             },
-//             {
-//                 fieldname: "type",
-//                 label: "Type",
-//                 fieldtype: "Link",
-//                 options: "Customer Asset Spec",
-//                 columns: 2
-//             },
-
-//             { fieldtype: "Column Break" },
-
-//             {
-//                 fieldtype: "Button",
-//                 fieldname: "apply_filters",
-//                 label: "Apply Filters"
-//             },
-
-//             { fieldtype: "Section Break", label: "Results" },
-
-//             {
-//                 fieldname: "preview_html",
-//                 fieldtype: "HTML"
-//             }
-//         ],
-
-//         primary_action_label: "Load Selected",
-//         primary_action() {
-
-//             if (!dialog.datatable) {
-//                 frappe.msgprint("Please apply filters first.");
-//                 return;
-//             }
-
-//             const selected_indexes = dialog.datatable.rowmanager.getCheckedRows();
-
-//             if (!selected_indexes.length) {
-//                 frappe.msgprint("Please select at least one row.");
-//                 return;
-//             }
-
-//             frm.clear_table("custom_customer_installed_assets");
-
-//             selected_indexes.forEach(index => {
-
-//                 const row = dialog.data[index];
-
-//                 let d = frm.add_child("custom_customer_installed_assets");
-
-//                 d.location = row.location;
-//                 d.sub_location = row.sub_location;
-//                 d.sub_location_address = row.sub_location_address;
-
-//                 d.item_group = row.custom_item_group;
-//                 d.item_code = row.custom_item_code;
-
-//                 d.model = row.model;
-//                 d.type = row.type;
-
-//                 d.amc = row.amc;
-//                 d.start_date = row.start_date;
-//                 d.end_date = row.end_date;
-//                 d.warrenty = row.warrenty;
-//             });
-
-//             frm.refresh_field("custom_customer_installed_assets");
-//             dialog.hide();
-//         }
-//     });
-
-//     dialog.show();
-
-//     dialog.get_field("apply_filters").$input.on("click", function () {
-//         fetch_assets(frm, dialog);
-//     });
-// }
 function open_maintenance_dialog(frm) {
 
     const dialog = new frappe.ui.Dialog({
@@ -146,13 +25,6 @@ function open_maintenance_dialog(frm) {
                 get_data: function (txt) {
                     return frappe.db.get_link_options("Customer Location", txt);
                 },
-                columns: 3
-            },
-            {
-                fieldname: "sub_location",
-                label: "Sub Location",
-                fieldtype: "Link",
-                options: "Customer Sub Location",
                 columns: 3
             },
             {
@@ -227,8 +99,7 @@ function open_maintenance_dialog(frm) {
                 let d = frm.add_child("custom_customer_installed_assets");
 
                 d.location = row.location;
-                d.sub_location = row.sub_location;
-                d.sub_location_address = row.sub_location_address;
+                d.sub_location_address = row.description;
 
                 d.item_group = row.custom_item_group;
                 d.item_code = row.custom_item_code;

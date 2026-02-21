@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "location",
+  "address",
   "custom_item_group",
   "custom_item_code",
   "model",
@@ -94,13 +95,18 @@
    "fieldname": "warranty_date",
    "fieldtype": "Date",
    "label": "Warranty Date"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Data",
+   "label": "Address"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-02-17 15:28:27.848197",
+ "modified": "2026-02-21 16:21:06.740919",
  "modified_by": "Administrator",
  "module": "customer addon",
  "name": "Customer Installed Asset",

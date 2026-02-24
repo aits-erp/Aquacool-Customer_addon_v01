@@ -28,7 +28,7 @@ fixtures = [
     {
         "doctype": "Role",
         "filters": [
-            ["name", "=", "Customer Visit User"]
+            ["name", "in", ["Customer Visit User", "Customer Visit Manager"]]  # ← updated
         ]
     },
     {

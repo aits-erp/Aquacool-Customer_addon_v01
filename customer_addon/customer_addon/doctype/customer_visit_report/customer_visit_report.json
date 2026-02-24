@@ -48,7 +48,8 @@
   {
    "fieldname": "customer_contact_number",
    "fieldtype": "Data",
-   "label": "Customer Contact Number"
+   "label": "Customer Contact Number",
+   "reqd": 1
   },
   {
    "fieldname": "visit_details_section",
@@ -56,11 +57,12 @@
    "label": "Visit Details"
   },
   {
+   "default": "Now",
    "fieldname": "visit_datetime",
    "fieldtype": "Datetime",
    "in_list_view": 1,
    "label": "Visit Datetime",
-   "reqd": 1
+   "read_only": 1
   },
   {
    "fieldname": "visiting_purpose",
@@ -107,7 +109,8 @@
   {
    "fieldname": "check_in_date_and_time",
    "fieldtype": "Datetime",
-   "label": "Check In Date and Time"
+   "label": "Check In Date and Time",
+   "read_only": 1
   },
   {
    "fieldname": "checkout",
@@ -117,7 +120,8 @@
   {
    "fieldname": "check_out_date_and_time",
    "fieldtype": "Datetime",
-   "label": "Check Out Date and Time"
+   "label": "Check Out Date and Time",
+   "read_only": 1
   },
   {
    "fieldname": "visit_status",
@@ -153,7 +157,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-02-20 23:50:01.350049",
+ "modified": "2026-02-24 11:14:01.963611",
  "modified_by": "Administrator",
  "module": "customer addon",
  "name": "Customer Visit Report",

@@ -10,29 +10,28 @@ def get_customer_visit_permission_query(user):
     if "System Manager" in user_roles:
         return ""
 
-    # Get the Employee record linked to this user
     employee = frappe.db.get_value("Employee", {"user_id": user}, "name")
 
+    # Manager logic
     if "Customer Visit Manager" in user_roles:
+        visible_users = [user]
+
         if employee:
-            # Get all employees who report to this manager
-            reportee_employees = frappe.db.get_all(
+            reportees = frappe.db.get_all(
                 "Employee",
                 filters={"reports_to": employee},
-                fields=["user_id"]
+                pluck="user_id"
             )
 
-            # Collect visible user IDs: own + reportees
-            visible_users = [user]
-            for emp in reportee_employees:
-                if emp.user_id:
-                    visible_users.append(emp.user_id)
+            for u in reportees:
+                if u:
+                    visible_users.append(u)
 
-            # Build IN clause without extra quoting
-            user_list = ", ".join([f"'{u}'" for u in visible_users])
-            return f"`tabCustomer Visit Report`.`visited_by` IN ({user_list})"
-        else:
-            return f"`tabCustomer Visit Report`.`visited_by` = '{user}'"
+        visible_users = list(set(visible_users))
 
-    # Customer Visit User — own entries only
-    return f"`tabCustomer Visit Report`.`visited_by` = '{user}'"
+        user_list = ", ".join([frappe.db.escape(u) for u in visible_users])
+
+        return f"`tabCustomer Visit Report`.`visited_by` IN ({user_list})"
+
+    # Normal User
+    return f"`tabCustomer Visit Report`.`visited_by` = {frappe.db.escape(user)}"

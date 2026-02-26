@@ -14,30 +14,25 @@ def get_customer_visit_permission_query(user):
     employee = frappe.db.get_value("Employee", {"user_id": user}, "name")
 
     if "Customer Visit Manager" in user_roles:
-        # Manager sees:
-        # 1. Their own entries (visited_by = current user)
-        # 2. Entries of employees whose reports_to = this manager's Employee record
-
         if employee:
-            # Get all users who report to this manager
+            # Get all employees who report to this manager
             reportee_employees = frappe.db.get_all(
                 "Employee",
                 filters={"reports_to": employee},
                 fields=["user_id"]
             )
 
-            # Collect all visible user IDs: own + reportees
+            # Collect visible user IDs: own + reportees
             visible_users = [user]
             for emp in reportee_employees:
                 if emp.user_id:
                     visible_users.append(emp.user_id)
 
-            # Build safe SQL IN clause
-            user_list = ", ".join([f"'{frappe.db.escape(u)}'" for u in visible_users])
+            # Build IN clause without extra quoting
+            user_list = ", ".join([f"'{u}'" for u in visible_users])
             return f"`tabCustomer Visit Report`.`visited_by` IN ({user_list})"
         else:
-            # Manager has no Employee record, show only their own entries
-            return f"`tabCustomer Visit Report`.`visited_by` = '{frappe.db.escape(user)}'"
+            return f"`tabCustomer Visit Report`.`visited_by` = '{user}'"
 
-    # Default: Customer Visit User sees only their own entries
-    return f"`tabCustomer Visit Report`.`visited_by` = '{frappe.db.escape(user)}'"
+    # Customer Visit User — own entries only
+    return f"`tabCustomer Visit Report`.`visited_by` = '{user}'"

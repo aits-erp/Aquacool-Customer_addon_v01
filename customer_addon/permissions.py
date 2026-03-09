@@ -1,6 +1,7 @@
 import frappe
 
 def get_customer_visit_permission_query(user):
+    frappe.throw("Permission Query Triggered")
     if not user:
         user = frappe.session.user
 

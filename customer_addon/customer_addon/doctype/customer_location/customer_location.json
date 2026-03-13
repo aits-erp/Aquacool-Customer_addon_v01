@@ -2,6 +2,7 @@
  "actions": [],
  "allow_import": 1,
  "allow_rename": 1,
+ "autoname": "field:location_name",
  "creation": "2026-01-23 12:22:28.125970",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -27,10 +28,11 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-20 22:28:56.616542",
+ "modified": "2026-03-09 17:47:01.452245",
  "modified_by": "Administrator",
  "module": "customer addon",
  "name": "Customer Location",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {

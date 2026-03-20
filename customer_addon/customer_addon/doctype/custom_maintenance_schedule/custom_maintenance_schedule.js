@@ -74,7 +74,7 @@ frappe.ui.form.on("Custom Maintenance Schedule", {
     }
 
 });
-
+//  test 
 // frappe.ui.form.on("Custom Maintenancce Schedule", {
 //     customer: function(frm) {
 

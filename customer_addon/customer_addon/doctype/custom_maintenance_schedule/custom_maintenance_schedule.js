@@ -161,6 +161,9 @@ frappe.ui.form.on("Custom Maintenance Schedule", {
 // });
 
 
+// test 
+
+
 // frappe.ui.form.on("Custom Maintenance Schedule", {
 
 //     generate_schedule: function(frm) {

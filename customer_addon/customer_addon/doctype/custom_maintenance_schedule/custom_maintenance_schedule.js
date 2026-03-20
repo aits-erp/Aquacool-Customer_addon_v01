@@ -1,54 +1,178 @@
-// Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
-// License: GNU General Public License v3. See license.txt
-
-frappe.provide("erpnext.maintenance");
 frappe.ui.form.on("Custom Maintenance Schedule", {
-	setup: function (frm) {
-		frm.set_query("contact_person", erpnext.queries.contact_query);
-		frm.set_query("customer_address", erpnext.queries.address_query);
-		frm.set_query("customer", erpnext.queries.customer);
 
-		frm.set_query("serial_and_batch_bundle", "items", (doc, cdt, cdn) => {
-			let item = locals[cdt][cdn];
+    setup(frm) {
+        frm.set_query("sales_order", () => {
+            return {
+                filters: {
+                    customer: frm.doc.customer
+                }
+            };
+        });
+    },
 
-			return {
-				filters: {
-					item_code: item.item_code,
-					voucher_type: "Custom Maintenance Schedule",
-					type_of_transaction: "Maintenance",
-					company: doc.company,
-				},
-			};
-		});
-	},
-	onload: function (frm) {
-		if (!frm.doc.status) {
-			frm.set_value({ status: "Draft" });
-		}
-		if (frm.doc.__islocal) {
-			frm.set_value({ transaction_date: frappe.datetime.get_today() });
-		}
-	},
-	refresh: function (frm) {
-		setTimeout(() => {
-			frm.toggle_display("generate_schedule", !(frm.is_new() || frm.doc.docstatus));
-			frm.toggle_display("schedule", !frm.is_new());
-		}, 10);
-	},
-	customer: function (frm) {
-		erpnext.utils.get_party_details(frm);
-	},
-	customer_address: function (frm) {
-		erpnext.utils.get_address_display(frm, "customer_address", "address_display");
-	},
-	contact_person: function (frm) {
-		erpnext.utils.get_contact_details(frm);
-	},
-	generate_schedule: function (frm) {
-		if (frm.is_new()) {
-			frappe.msgprint(__("Please save first"));
-		} else {
-			frm.call("generate_schedule");
-		}
-	},
+    customer(frm) {
+        frm.set_value("sales_order", "");
+        frm.clear_table("items");
+        frm.refresh_field("items");
+    },
+
+    sales_order(frm) {
+
+    if (!frm.doc.sales_order) return;
+
+    // prevent reload if items already loaded
+    if (frm.doc.items && frm.doc.items.length > 0) {
+        return;
+    }
+
+    frappe.call({
+        method: "frappe.client.get",
+        args: {
+            doctype: "Sales Order",
+            name: frm.doc.sales_order
+        },
+        callback(r) {
+
+            if (!r.message) return;
+
+            let assets = r.message.custom_customer_installed_assets || [];
+
+            frm.clear_table("items");
+
+            assets.forEach(d => {
+
+                frm.add_child("items", {
+                    item_code: d.item_code,
+                    serial_no: d.name,
+                    sales_order: frm.doc.sales_order,
+                    start_date: d.start_date,
+                    end_date: d.end_date,
+                    custom_location: d.location
+                });
+
+            });
+
+            frm.refresh_field("items");
+
+        }
+    });
+
+},
+    // ⭐ THIS WAS MISSING
+    generate_schedule(frm) {
+
+        if (frm.is_new()) {
+            frappe.msgprint("Please save the document first.");
+            return;
+        }
+
+        frm.call("generate_schedule").then(() => {
+            frm.refresh_field("schedules");
+            frappe.msgprint("Schedule Generated Successfully");
+        });
+
+    }
+
 });
+
+// frappe.ui.form.on("Custom Maintenancce Schedule", {
+//     customer: function(frm) {
+
+//         frm.set_query("sales_order", function() {
+//             return {
+//                 filters: {
+//                     customer: frm.doc.customer,
+//                     docstatus: 1
+//                 }
+//             };
+//         });
+
+//     }
+// });
+
+
+
+// frappe.ui.form.on("Custom Maintenancce Schedule", {
+//     customer(frm) {
+//         console.log("Customer changed", frm.doc.customer)
+//     }
+// });
+
+// frappe.ui.form.on("Custom Maintenance Schedule", {
+
+//     setup: function(frm) {
+//         frm.set_query("sales_order", function() {
+//             return {
+//                 filters: {
+//                     customer: frm.doc.customer
+//                 }
+//             };
+//         });
+//     },
+
+//     customer: function(frm) {
+//         frm.set_value("sales_order", "");
+//     }
+
+// });
+
+
+// frappe.ui.form.on("Custom Maintenance Schedule", {
+
+//     sales_order: function(frm) {
+
+//         if (!frm.doc.sales_order) return;
+
+//         frappe.call({
+//             method: "frappe.client.get",
+//             args: {
+//                 doctype: "Sales Order",
+//                 name: frm.doc.sales_order
+//             },
+//             callback: function(r) {
+
+//                 if (!r.message) return;
+
+//                 console.log("Installed Assets:", r.message.custom_customer_installed_assets);
+
+//                 frm.clear_table("items");
+
+//                 (r.message.custom_customer_installed_assets || []).forEach(function(d){
+
+//                     let row = frm.add_child("items");
+
+//                     row.item_code = d.item_code;
+					
+//                     row.serial_no = d.name;  
+//                     row.sales_order = frm.doc.sales_order;
+//                     row.start_date = d.start_date;
+//                     row.end_date = d.end_date;
+// 					row.custom_location = d.custom_location;
+
+//                 });
+
+//                 frm.refresh_field("items");
+
+//             }
+//         });
+
+//     }
+
+// });
+
+
+// frappe.ui.form.on("Custom Maintenance Schedule", {
+
+//     generate_schedule: function(frm) {
+
+//         frm.call("generate_schedule").then(() => {
+
+//             frm.refresh_field("schedules");
+
+//             frappe.msgprint("Schedule Generated");
+
+//         });
+
+//     }
+
+// });

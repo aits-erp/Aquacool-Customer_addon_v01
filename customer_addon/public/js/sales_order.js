@@ -99,7 +99,7 @@ function open_maintenance_dialog(frm) {
                 let d = frm.add_child("custom_customer_installed_assets");
 
                 d.location = row.location;
-                d.sub_location_address = row.description;
+                d.sub_location_address = row.sub_location;
 
                 d.item_group = row.custom_item_group;
                 d.item_code = row.custom_item_code;

@@ -16,7 +16,8 @@
   "start_date",
   "end_date",
   "warrenty",
-  "warranty_date"
+  "warranty_date",
+  "service_no"
  ],
  "fields": [
   {
@@ -87,13 +88,20 @@
    "fieldname": "address",
    "fieldtype": "Data",
    "label": "Address"
+  },
+  {
+   "fieldname": "service_no",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Service No",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-02-21 16:37:22.679544",
+ "modified": "2026-03-09 17:29:28.013358",
  "modified_by": "Administrator",
  "module": "customer addon",
  "name": "Sales Order Installed Asset",

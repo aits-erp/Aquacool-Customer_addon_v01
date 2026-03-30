@@ -10,36 +10,50 @@ frappe.ui.form.on('Customer Visit Report', {
         control_buttons(frm);
     },
 
-    // checkin(frm) {
-    //     if (frm.doc.check_in_date_and_time) {
-    //         frappe.msgprint("Already Checked In");
-    //         return;
-    //     }
 
-    //     if (frm.is_new()) {
-    //         frappe.msgprint("Please Save document before Checkin.");
-    //         return;
-    //     }
 
-    //     frm.set_value("check_in_date_and_time", frappe.datetime.now_datetime());
-    //     frm.save();
-    // },
+ checkin(frm) {
 
-    checkin(frm) {
+    if (frm.doc.check_in_date_and_time) {
+        frappe.msgprint("Already Checked In");
+        return;
+    }
 
-        if (frm.doc.check_in_date_and_time) {
-            frappe.msgprint("Already Checked In");
-            return;
-        }
+    if (frm.is_new()) {
+        frappe.msgprint("Please Save document before Checkin.");
+        return;
+    }
 
-        if (frm.is_new()) {
-            frappe.msgprint("Please Save document before Checkin.");
-            return;
-        }
+    navigator.geolocation.getCurrentPosition((position) => {
 
+        let lat = parseFloat(position.coords.latitude.toFixed(6));
+        let lon = parseFloat(position.coords.longitude.toFixed(6));
+
+        frm.set_value("latitude", lat);
+        frm.set_value("longitude", lon);
+
+        let geo_json = {
+            type: "FeatureCollection",
+            features: [{
+                type: "Feature",
+                properties: {},
+                geometry: {
+                    type: "Point",
+                    coordinates: [lon, lat]
+                }
+            }]
+        };
+
+        frm.set_value("location", JSON.stringify(geo_json));
         frm.set_value("check_in_date_and_time", frappe.datetime.now_datetime());
-        frm.save();
-    },
+
+        frm.save().then(() => {
+            frm.reload_doc();
+            frappe.show_alert("✅ Check-in + Location + Address saved");
+        });
+
+    });
+},
 
     checkout(frm) {
         if (!frm.doc.check_in_date_and_time) {
@@ -56,7 +70,7 @@ frappe.ui.form.on('Customer Visit Report', {
         frm.save();
     },
 
-    get_location(frm) {
+get_location(frm) {
 
     if (!navigator.geolocation) {
         frappe.msgprint("Geolocation is not supported by this browser.");
@@ -68,27 +82,22 @@ frappe.ui.form.on('Customer Visit Report', {
     navigator.geolocation.getCurrentPosition(
         function(position) {
 
-            let lat = position.coords.latitude;
-            let lon = position.coords.longitude;
+            let lat = parseFloat(position.coords.latitude.toFixed(6));
+            let lon = parseFloat(position.coords.longitude.toFixed(6));
 
-            // Round for clean display (6 decimal precision is professional standard)
-            lat = parseFloat(lat.toFixed(6));
-            lon = parseFloat(lon.toFixed(6));
-
-            // Set visible fields
+            // ✅ Set values
             frm.set_value("latitude", lat);
             frm.set_value("longitude", lon);
 
-            // Build GeoJSON
             let geo_json = {
-                "type": "FeatureCollection",
-                "features": [
+                type: "FeatureCollection",
+                features: [
                     {
-                        "type": "Feature",
-                        "properties": {},
-                        "geometry": {
-                            "type": "Point",
-                            "coordinates": [lon, lat]   // IMPORTANT ORDER
+                        type: "Feature",
+                        properties: {},
+                        geometry: {
+                            type: "Point",
+                            coordinates: [lon, lat]
                         }
                     }
                 ]
@@ -96,15 +105,20 @@ frappe.ui.form.on('Customer Visit Report', {
 
             frm.set_value("location", JSON.stringify(geo_json));
 
-            frm.refresh_field("latitude");
-            frm.refresh_field("longitude");
-            frm.refresh_field("location");
+            frappe.show_alert("📍 Location Captured, Saving...");
 
-            frappe.msgprint("Location Captured Successfully");
+            // 🔥🔥 MOST IMPORTANT PART
+            frm.save().then(() => {
+
+                // 👇 reload so backend updated address shows
+                frm.reload_doc();
+
+                frappe.show_alert("✅ Address Updated Successfully");
+            });
 
         },
         function(error) {
-            frappe.msgprint("Unable to fetch location. Please allow location access.");
+            frappe.msgprint("❌ Unable to fetch location. Please allow location access.");
         },
         {
             enableHighAccuracy: true,
@@ -115,6 +129,7 @@ frappe.ui.form.on('Customer Visit Report', {
 }
 
 });
+
 
 
 function control_buttons(frm) {

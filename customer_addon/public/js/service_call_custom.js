@@ -1,6 +1,5 @@
 frappe.ui.form.on("Service Call Custom", {
 
-    // 🔹 SERVICE NO QUERY
     setup(frm) {
         frm.set_query("service_no", function () {
             return {
@@ -9,26 +8,21 @@ frappe.ui.form.on("Service Call Custom", {
         });
     },
 
-    // 🔹 BUTTONS
     refresh(frm) {
 
-        console.log("🔥 BUTTON LOADED");
-
-        // duplicate buttons avoid
         frm.clear_custom_buttons();
 
-        // ✅ Check In
+        // ✅ CHECK IN
         frm.add_custom_button("Check In", () => {
             handleLocation(frm, "check_in");
         });
 
-        // ✅ Check Out
+        // ✅ CHECK OUT
         frm.add_custom_button("Check Out", () => {
             handleLocation(frm, "check_out");
         });
     },
 
-    // 🔹 FETCH SERVICE DATA
     service_no(frm) {
 
         if (!frm.doc.service_no) return;
@@ -51,12 +45,11 @@ frappe.ui.form.on("Service Call Custom", {
                 frm.set_value("customer", data.customer || "");
                 frm.set_value("location", data.location || "");
 
-                // 🔥 TABLE RESET
                 frm.clear_table("custom_items");
 
                 data.items.forEach(d => {
 
-                    if (!d.item_code) return; // safety
+                    if (!d.item_code) return;
 
                     let row = frm.add_child("custom_items");
 
@@ -73,7 +66,7 @@ frappe.ui.form.on("Service Call Custom", {
 });
 
 
-// 📍 MAIN LOCATION FUNCTION
+// 📍 LOCATION HANDLER
 function handleLocation(frm, type) {
 
     if (!navigator.geolocation) {
@@ -124,7 +117,7 @@ function handleLocation(frm, type) {
                 frappe.msgprint("✅ Check Out Done");
             }
 
-            frm.save(); // auto save
+            frm.save();
 
         },
 
@@ -132,88 +125,9 @@ function handleLocation(frm, type) {
 
             if (error.code === 1) {
                 frappe.msgprint("❌ Please allow location access");
-            } else if (error.code === 2) {
-                frappe.msgprint("❌ Location not available");
-            } else if (error.code === 3) {
-                frappe.msgprint("❌ Location timeout");
             } else {
-                frappe.msgprint("❌ Unknown location error");
+                frappe.msgprint("❌ Location error");
             }
         }
     );
 }
-
-
-
-// frappe.ui.form.on("Service Call Custom", {
-
-//     setup(frm) {
-//         frm.set_query("service_no", function () {
-//             return {
-//                 query: "customer_addon.customer_addon.doctype.service_call_custom.service_call_custom.get_service_no"
-//             };
-//         });
-//     },
-
-//     service_no(frm) {
-
-//         if (!frm.doc.service_no) return;
-
-//         frappe.call({
-//             method: "customer_addon.customer_addon.doctype.service_call_custom.service_call_custom.get_service_details",
-//             args: {
-//                 service_no: frm.doc.service_no
-//             },
-//             callback: function (r) {
-
-//                 console.log("FULL DATA:", r.message);
-
-//                 if (!r.message || !r.message.items) {
-//                     frappe.msgprint("No data found");
-//                     return;
-//                 }
-
-//                 let data = r.message;
-
-//                 // ✅ ALWAYS SET (no skip)
-//                 frm.set_value("custom_service_no_display", data.service_no_display || "");
-//                 frm.set_value("customer", data.customer || "");
-//                 frm.set_value("location", data.location || "");
-
-//                 // 🔥 IMPORTANT FIX (force set date)
-//                 // console.log("DATE:", data.schedule_date);
-
-//                 // if (data.schedule_date) {
-//                 //     frm.set_value("schedule_date", data.schedule_date);
-//                 // } else if (data.items && data.items.length > 0) {
-//                 //     // fallback from first item
-//                 //     frm.set_value("schedule_date", data.items[0].start_date || "");
-//                 // } else {
-//                 //     frm.set_value("schedule_date", "");
-//                 // }
-
-//                 // 🔥 TABLE
-//                 frm.clear_table("custom_items");
-
-//                 data.items.forEach(d => {
-
-//                     console.log("ITEM:", d);
-
-//                     let row = frm.add_child("custom_items");
-
-//                     row.item_code = d.item_code || "";
-//                     row.serial_no = d.serial_no || "";
-//                     row.start_date = d.start_date || ""; 
-
-//                 });
-
-//                 frm.refresh_field("custom_items");
-
-//             }
-//         });
-
-//     }
-
-// });
-
-

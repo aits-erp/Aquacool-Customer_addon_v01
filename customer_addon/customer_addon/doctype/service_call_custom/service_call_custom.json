@@ -11,11 +11,12 @@
   "customer",
   "location",
   "technician",
-  "schedule_date",
   "check_in_time",
   "check_out_time",
-  "latitude",
-  "longitude",
+  "check_in_latitude",
+  "check_in_longitude",
+  "check_out_latitude",
+  "check_out_lat",
   "completion_status"
  ],
  "fields": [
@@ -57,11 +58,6 @@
    "options": "Employee"
   },
   {
-   "fieldname": "schedule_date",
-   "fieldtype": "Date",
-   "label": "Schedule Date"
-  },
-  {
    "fieldname": "check_in_time",
    "fieldtype": "Datetime",
    "label": "Check In Time"
@@ -72,27 +68,37 @@
    "label": "Check Out Time"
   },
   {
-   "fieldname": "latitude",
-   "fieldtype": "Data",
-   "label": "Latitude"
-  },
-  {
-   "fieldname": "longitude",
-   "fieldtype": "Data",
-   "label": "Longitude"
-  },
-  {
    "fieldname": "completion_status",
    "fieldtype": "Select",
    "label": "Completion Status",
    "options": "Completed\nPending\nFollow Up"
+  },
+  {
+   "fieldname": "check_in_latitude",
+   "fieldtype": "Data",
+   "label": "Check In Lat"
+  },
+  {
+   "fieldname": "check_in_longitude",
+   "fieldtype": "Data",
+   "label": "Check In Lon"
+  },
+  {
+   "fieldname": "check_out_latitude",
+   "fieldtype": "Data",
+   "label": "Check Out Lon"
+  },
+  {
+   "fieldname": "check_out_lat",
+   "fieldtype": "Data",
+   "label": "Check Out Lat"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-03-17 11:21:36.377789",
+ "modified": "2026-03-24 17:03:58.727850",
  "modified_by": "Administrator",
  "module": "customer addon",
  "name": "Service Call Custom",

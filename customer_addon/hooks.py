@@ -9,7 +9,9 @@ app_include_css = "/assets/customer_addon/css/dialog.css"
 
 doctype_js = {
     "Customer": "public/js/customer.js",
-    "Sales Order": "public/js/sales_order.js"
+    "Sales Order": "public/js/sales_order.js",
+    # "Custom Service Item": "public/js/custom_service_item.js"
+    "Service Call Custom": "public/js/service_call_custom.js"
 }
 
 doc_events = {
@@ -25,18 +27,7 @@ fixtures = [
             ["module", "=", "customer addon"]
         ]
     },
-    {
-        "doctype": "Role",
-        "filters": [
-            ["name", "in", ["Customer Visit User", "Customer Visit Manager"]]  # ← updated
-        ]
-    },
-    {
-        "doctype": "Custom DocPerm",
-        "filters": [
-            ["parent", "=", "Customer Visit Report"]
-        ]
-    }
+    
 ]
 
 permission_query_conditions = {

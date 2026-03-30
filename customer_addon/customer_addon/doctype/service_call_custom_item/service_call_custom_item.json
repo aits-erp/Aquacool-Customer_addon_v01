@@ -8,14 +8,17 @@
  "field_order": [
   "item_code",
   "serial_no",
-  "description"
+  "description",
+  "start_date",
+  "status",
+  "follow_up"
  ],
  "fields": [
   {
    "fieldname": "item_code",
    "fieldtype": "Link",
    "label": "Item Code",
-   "options": "Item"
+   "options": "Customer Asset Item"
   },
   {
    "fieldname": "serial_no",
@@ -26,13 +29,31 @@
    "fieldname": "description",
    "fieldtype": "Data",
    "label": "Description"
+  },
+  {
+   "fieldname": "start_date",
+   "fieldtype": "Data",
+   "label": "Start Date"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "\nCompleted\nFollow Up"
+  },
+  {
+   "depends_on": "eval:doc.status && doc.status.trim()==\"Follow Up\"",
+   "fieldname": "follow_up",
+   "fieldtype": "Datetime",
+   "label": "Follow Up",
+   "mandatory_depends_on": "eval:doc.status && doc.status.trim()==\"Follow Up\""
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-03-17 17:16:20.221805",
+ "modified": "2026-03-30 15:08:56.080697",
  "modified_by": "Administrator",
  "module": "customer addon",
  "name": "Service Call Custom Item",

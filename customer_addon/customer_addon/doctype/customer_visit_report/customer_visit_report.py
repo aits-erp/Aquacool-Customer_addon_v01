@@ -1,6 +1,5 @@
 import frappe
 from frappe.model.document import Document
-from frappe.utils import now_datetime
 import json
 import requests
 
@@ -10,16 +9,15 @@ def get_address_from_coordinates(lat, lon):
         url = f"https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}"
 
         headers = {
-            "User-Agent": "frappe-app"
+            "User-Agent": "customer-visit-app (pankaj@gmail.com)"
         }
 
-        response = requests.get(url, headers=headers, timeout=5)
+        response = requests.get(url, headers=headers, timeout=10)
 
         if response.status_code == 200:
             data = response.json()
             return data.get("display_name", "")
-        else:
-            return ""
+        return ""
 
     except Exception as e:
         frappe.log_error(f"Reverse Geocoding Error: {str(e)}")
@@ -32,14 +30,14 @@ class CustomerVisitReport(Document):
         self.set_user()
         self.validate_check_flow()
         self.validate_location()
-        self.set_location_name()   # 🔥 auto address set
 
-    # ✅ Auto set logged-in user
+    def before_save(self):
+        self.set_location_name()   # 🔥 correct place
+
     def set_user(self):
         if not self.visited_by:
             self.visited_by = frappe.session.user
 
-    # ✅ Check-in / Check-out validation
     def validate_check_flow(self):
 
         if self.check_out_date_and_time and not self.check_in_date_and_time:
@@ -49,7 +47,6 @@ class CustomerVisitReport(Document):
             if self.check_out_date_and_time < self.check_in_date_and_time:
                 frappe.throw("❌ Checkout time cannot be before Checkin time.")
 
-    # ✅ Location validation (GeoJSON + lat/lng match)
     def validate_location(self):
 
         if self.location:
@@ -67,10 +64,14 @@ class CustomerVisitReport(Document):
             except Exception:
                 frappe.throw("❌ Invalid location data format.")
 
-    # ✅ Address auto fetch and set
     def set_location_name(self):
 
+        # 🔥 Avoid repeat API calls
+        if self.location_name:
+            return
+
         if self.latitude and self.longitude:
+
             address = get_address_from_coordinates(self.latitude, self.longitude)
 
             if address:
@@ -78,7 +79,6 @@ class CustomerVisitReport(Document):
             else:
                 self.location_name = "Address not found"
 
-    # ✅ Prevent submit without check-in/out
     def before_submit(self):
 
         if not self.check_in_date_and_time:

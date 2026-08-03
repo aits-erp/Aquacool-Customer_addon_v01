@@ -10,6 +10,7 @@
   "naming_series",
   "customer",
   "sales_order",
+  "load_items",
   "column_break0",
   "status",
   "transaction_date",
@@ -224,6 +225,12 @@
    "fieldtype": "Link",
    "label": "Sales Order",
    "options": "Sales Order"
+  },
+  {
+    "fieldname": "load_items",
+    "fieldtype": "Button",
+    "label": "Load Items",
+    "depends_on": "eval:doc.sales_order"
   },
   {
    "fieldname": "amended_from",

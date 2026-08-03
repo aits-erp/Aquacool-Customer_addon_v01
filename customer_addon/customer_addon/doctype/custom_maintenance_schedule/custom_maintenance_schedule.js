@@ -15,49 +15,65 @@ frappe.ui.form.on("Custom Maintenance Schedule", {
         frm.clear_table("items");
         frm.refresh_field("items");
     },
-
-    sales_order(frm) {
-
-    if (!frm.doc.sales_order) return;
-
-    // prevent reload if items already loaded
-    if (frm.doc.items && frm.doc.items.length > 0) {
-        return;
-    }
-
-    frappe.call({
-        method: "frappe.client.get",
-        args: {
-            doctype: "Sales Order",
-            name: frm.doc.sales_order
-        },
-        callback(r) {
-
-            if (!r.message) return;
-
-            let assets = r.message.custom_customer_installed_assets || [];
-
-            frm.clear_table("items");
-
-            assets.forEach(d => {
-
-                frm.add_child("items", {
-                    item_code: d.item_code,
-                    serial_no: d.name,
-                    sales_order: frm.doc.sales_order,
-                    start_date: d.start_date,
-                    end_date: d.end_date,
-                    custom_location: d.location
-                });
-
-            });
-
-            frm.refresh_field("items");
-
+    
+    load_items(frm) {
+        if (!frm.doc.sales_order) {
+            frappe.msgprint("Please select a Sales Order first.");
+            return;
         }
-    });
 
-},
+        const load_rows = () => {
+            frappe.call({
+                method: "frappe.client.get",
+                args: {
+                    doctype: "Sales Order",
+                    name: frm.doc.sales_order
+                },
+                callback(r) {
+                    if (!r.message) {
+                        frappe.msgprint("Sales Order could not be loaded.");
+                        return;
+                    }
+
+                    const assets = r.message.custom_customer_installed_assets || [];
+
+                    if (!assets.length) {
+                        frappe.msgprint(
+                            "No maintenance assets were found in the selected Sales Order."
+                        );
+                        return;
+                    }
+
+                    frm.clear_table("items");
+
+                    assets.forEach(d => {
+                        frm.add_child("items", {
+                            item_code: d.item_code,
+                            serial_no: d.name,
+                            sales_order: frm.doc.sales_order,
+                            start_date: d.start_date,
+                            end_date: d.end_date,
+                            custom_location: d.location
+                        });
+                    });
+
+                    frm.refresh_field("items");
+                    frm.dirty();
+                }
+            });
+        };
+
+        if (frm.doc.items?.length) {
+            frappe.confirm(
+                "Loading items will replace the existing rows. Continue?",
+                load_rows
+            );
+            return;
+        }
+
+        load_rows();
+    },
+
     // ⭐ THIS WAS MISSING
     generate_schedule(frm) {
 

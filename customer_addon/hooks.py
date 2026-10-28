@@ -11,7 +11,13 @@ doctype_js = {
     "Customer": "public/js/customer.js",
     "Sales Order": "public/js/sales_order.js",
     # "Custom Service Item": "public/js/custom_service_item.js"
-    "Service Call Custom": "public/js/service_call_custom.js"
+    "Service Call Custom": "public/js/service_call_custom.js",
+    "Issue": "public/js/issue.js",
+
+}
+
+override_doctype_dashboards = {
+    "Issue": "customer_addon.issue_dashboard.get_data",
 }
 
 doc_events = {
@@ -19,6 +25,7 @@ doc_events = {
         "validate": "customer_addon.overrides.customer.validate"
     }
 }
+
 
 fixtures = [
     {

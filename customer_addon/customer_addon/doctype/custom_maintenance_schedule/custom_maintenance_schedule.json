@@ -10,10 +10,15 @@
   "naming_series",
   "customer",
   "sales_order",
+  "default_start_date",
+  "select",
   "load_items",
   "column_break0",
   "status",
   "transaction_date",
+  "type",
+  "default_no_of_visits",
+  "default_end_date",
   "items_section",
   "items",
   "schedule",
@@ -227,10 +232,10 @@
    "options": "Sales Order"
   },
   {
-    "fieldname": "load_items",
-    "fieldtype": "Button",
-    "label": "Load Items",
-    "depends_on": "eval:doc.sales_order"
+   "depends_on": "eval:doc.sales_order",
+   "fieldname": "load_items",
+   "fieldtype": "Button",
+   "label": "Load Items"
   },
   {
    "fieldname": "amended_from",
@@ -241,6 +246,33 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "label": "Type",
+   "options": "\nAMC\nWarranty"
+  },
+  {
+   "fieldname": "default_start_date",
+   "fieldtype": "Date",
+   "label": "Default Start Date"
+  },
+  {
+   "fieldname": "select",
+   "fieldtype": "Select",
+   "label": "Select",
+   "options": "Weekly\nMonthly\nQuarterly\nHalf Yearly\nYearly"
+  },
+  {
+   "fieldname": "default_no_of_visits",
+   "fieldtype": "Int",
+   "label": "Default No. of Visits"
+  },
+  {
+   "fieldname": "default_end_date",
+   "fieldtype": "Date",
+   "label": "Default End Date"
   }
  ],
  "icon": "fa fa-calendar",
@@ -252,7 +284,7 @@
    "link_fieldname": "maintenance_schedule"
   }
  ],
- "modified": "2026-03-09 14:33:21.771275",
+ "modified": "2026-10-30 12:00:01.472079",
  "modified_by": "Administrator",
  "module": "customer addon",
  "name": "Custom Maintenance Schedule",

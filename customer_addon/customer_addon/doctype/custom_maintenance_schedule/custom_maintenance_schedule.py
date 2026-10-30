@@ -262,6 +262,21 @@ class CustomMaintenanceSchedule(Document):
 
                     row.location = location
 
+                    # Address from Customer Installed Asset
+                    customer_asset_address = frappe.db.get_value(
+                        "Customer Installed Asset",
+                        {
+                            "parent": customer,
+                            "parenttype": "Customer",
+                            "parentfield": "custom_customer_installed_assets",
+                            "custom_item_code": item.item_code,
+                            "location": location
+                        },
+                        "address"
+                    )
+
+                    row.address = customer_asset_address or ""
+                    
                     # Sub Location Address
                     row.sub_location = location_description
 

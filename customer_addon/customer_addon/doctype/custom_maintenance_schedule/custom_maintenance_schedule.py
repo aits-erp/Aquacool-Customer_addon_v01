@@ -249,9 +249,15 @@ class CustomMaintenanceSchedule(Document):
                         or (source_asset.item_code if source_asset else None)
                     )
 
+                    # row.description = (
+                    #     item.description
+                    #     or (source_asset.description if source_asset else None)
+                    # )
+
                     row.description = (
-                        item.description
-                        or (source_asset.description if source_asset else None)
+                        item.get("description")
+                        or frappe.db.get_value("Item", item.item_code, "description")
+                        or ""
                     )
 
                     row.location = location

@@ -11,7 +11,18 @@
   "description",
   "start_date",
   "status",
-  "follow_up"
+  "follow_up",
+  "location",
+  "sub_location",
+  "address",
+  "item_group",
+  "model",
+  "type",
+  "capacity",
+  "amc",
+  "end_date",
+  "warranty",
+  "warranty_date"
  ],
  "fields": [
   {
@@ -47,13 +58,74 @@
    "fieldtype": "Datetime",
    "label": "Follow Up",
    "mandatory_depends_on": "eval:doc.status && doc.status.trim()==\"Follow Up\""
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Customer Location"
+  },
+  {
+   "fieldname": "sub_location",
+   "fieldtype": "Small Text",
+   "label": "Sub Location"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Data",
+   "label": "Address"
+  },
+  {
+   "fieldname": "item_group",
+   "fieldtype": "Link",
+   "label": "Item Group",
+   "options": "Customer Asset Group"
+  },
+  {
+   "fieldname": "model",
+   "fieldtype": "Link",
+   "label": "Model",
+   "options": "Customer Asset Model"
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Link",
+   "label": "Type",
+   "options": "Customer Asset Spec"
+  },
+  {
+   "fieldname": "capacity",
+   "fieldtype": "Data",
+   "label": "Capacity"
+  },
+  {
+   "fieldname": "amc",
+   "fieldtype": "Select",
+   "label": "AMC",
+   "options": "\nYes\nNo"
+  },
+  {
+   "fieldname": "end_date",
+   "fieldtype": "Date",
+   "label": "End Date"
+  },
+  {
+   "fieldname": "warranty",
+   "fieldtype": "Select",
+   "label": "Warranty",
+   "options": "\nYes\nNo"
+  },
+  {
+   "fieldname": "warranty_date",
+   "fieldtype": "Date",
+   "label": "Warranty Date"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-03-30 15:08:56.080697",
+ "modified": "2026-11-02 14:27:38.555197",
  "modified_by": "Administrator",
  "module": "customer addon",
  "name": "Service Call Custom Item",

@@ -40,9 +40,8 @@
   },
   {
    "fieldname": "service_no",
-   "fieldtype": "Link",
-   "label": "Service No",
-   "options": "Sales Order Installed Asset"
+   "fieldtype": "Data",
+   "label": "Service No"
   },
   {
    "fieldname": "customer",
@@ -123,7 +122,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-10-29 10:56:41.386259",
+ "modified": "2026-11-02 12:58:49.242560",
  "modified_by": "Administrator",
  "module": "customer addon",
  "name": "Service Call Custom",

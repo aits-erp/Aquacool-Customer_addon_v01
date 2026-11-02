@@ -364,6 +364,11 @@ def get_service_details(service_no):
         if row.parent and row.parenttype
     ))
 
+    print("DEBUG SERVICE NO:", service_no)
+    print("DEBUG ASSETS:", assets)
+    print("DEBUG UNIQUE PARENTS:", parents)
+    print("DEBUG PARENT COUNT:", len(parents))
+
     if len(parents) != 1:
         frappe.throw(
             f"Service No {service_no} belongs to multiple "

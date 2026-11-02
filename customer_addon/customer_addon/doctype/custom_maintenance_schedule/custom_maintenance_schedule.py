@@ -81,7 +81,7 @@
 #                     row.visit_no = d["visit_no"]
 
 #         frappe.msgprint("✅ SR Generated (Date-wise, Location Based)")
-# this one is orinal code, I will provide a more optimized version of the code below.   
+
 
 
 
@@ -530,7 +530,7 @@ class CustomMaintenanceSchedule(Document):
 
         # Save generated schedule rows to the database
         self.save()
-        
+
         frappe.msgprint(
             "SR Generated (Date-wise, Location Based)"
         )

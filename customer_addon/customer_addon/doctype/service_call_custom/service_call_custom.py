@@ -334,10 +334,16 @@ def get_service_details(service_no):
     if asset_meta.has_field("description"):
         fields.append("description")
 
-    # Fetch only fields available in the source DocType
+    # # Fetch only fields available in the source DocType
+    # fields = [
+    #     field for field in fields
+    #     if field == "name" or asset_meta.has_field(field)
+    # ]
+
     fields = [
         field for field in fields
-        if field == "name" or asset_meta.has_field(field)
+        if field in ("name", "parent", "parenttype", "parentfield")
+        or asset_meta.has_field(field)
     ]
 
     assets = frappe.get_all(

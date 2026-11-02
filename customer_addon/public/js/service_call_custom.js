@@ -1,135 +1,135 @@
-frappe.ui.form.on("Service Call Custom", {
+// frappe.ui.form.on("Service Call Custom", {
 
-    setup(frm) {
-        frm.set_query("service_no", function () {
-            return {
-                query: "customer_addon.customer_addon.doctype.service_call_custom.service_call_custom.get_service_no"
-            };
-        });
-    },
+//     setup(frm) {
+//         frm.set_query("service_no", function () {
+//             return {
+//                 query: "customer_addon.customer_addon.doctype.service_call_custom.service_call_custom.get_service_no"
+//             };
+//         });
+//     },
 
-    refresh(frm) {
+//     refresh(frm) {
 
-        frm.clear_custom_buttons();
+//         frm.clear_custom_buttons();
 
-        // ✅ CHECK IN
-        frm.add_custom_button("Check In", () => {
-            handleLocation(frm, "check_in");
-        });
+//         // ✅ CHECK IN
+//         frm.add_custom_button("Check In", () => {
+//             handleLocation(frm, "check_in");
+//         });
 
-        // ✅ CHECK OUT
-        frm.add_custom_button("Check Out", () => {
-            handleLocation(frm, "check_out");
-        });
-    },
+//         // ✅ CHECK OUT
+//         frm.add_custom_button("Check Out", () => {
+//             handleLocation(frm, "check_out");
+//         });
+//     },
 
-    service_no(frm) {
+//     service_no(frm) {
 
-        if (!frm.doc.service_no) return;
+//         if (!frm.doc.service_no) return;
 
-        frappe.call({
-            method: "customer_addon.customer_addon.doctype.service_call_custom.service_call_custom.get_service_details",
-            args: {
-                service_no: frm.doc.service_no
-            },
-            callback: function (r) {
+//         frappe.call({
+//             method: "customer_addon.customer_addon.doctype.service_call_custom.service_call_custom.get_service_details",
+//             args: {
+//                 service_no: frm.doc.service_no
+//             },
+//             callback: function (r) {
 
-                if (!r.message || !r.message.items) {
-                    frappe.msgprint("No data found");
-                    return;
-                }
+//                 if (!r.message || !r.message.items) {
+//                     frappe.msgprint("No data found");
+//                     return;
+//                 }
 
-                let data = r.message;
+//                 let data = r.message;
 
-                frm.set_value("custom_service_no_display", data.service_no_display || "");
-                frm.set_value("customer", data.customer || "");
-                frm.set_value("location", data.location || "");
+//                 frm.set_value("custom_service_no_display", data.service_no_display || "");
+//                 frm.set_value("customer", data.customer || "");
+//                 frm.set_value("location", data.location || "");
 
-                frm.clear_table("custom_items");
+//                 frm.clear_table("custom_items");
 
-                data.items.forEach(d => {
+//                 data.items.forEach(d => {
 
-                    if (!d.item_code) return;
+//                     if (!d.item_code) return;
 
-                    let row = frm.add_child("custom_items");
+//                     let row = frm.add_child("custom_items");
 
-                    row.item_code = d.item_code;
-                    row.serial_no = d.serial_no || "";
-                    row.start_date = d.start_date || "";
+//                     row.item_code = d.item_code;
+//                     row.serial_no = d.serial_no || "";
+//                     row.start_date = d.start_date || "";
 
-                });
+//                 });
 
-                frm.refresh_field("custom_items");
-            }
-        });
-    }
-});
+//                 frm.refresh_field("custom_items");
+//             }
+//         });
+//     }
+// });
 
 
-// 📍 LOCATION HANDLER
-function handleLocation(frm, type) {
+// // 📍 LOCATION HANDLER
+// function handleLocation(frm, type) {
 
-    if (!navigator.geolocation) {
-        frappe.msgprint("❌ Geolocation not supported");
-        return;
-    }
+//     if (!navigator.geolocation) {
+//         frappe.msgprint("❌ Geolocation not supported");
+//         return;
+//     }
 
-    navigator.geolocation.getCurrentPosition(
+//     navigator.geolocation.getCurrentPosition(
 
-        function(position) {
+//         function(position) {
 
-            let lat = position.coords.latitude;
-            let lon = position.coords.longitude;
-            let now = frappe.datetime.now_datetime();
+//             let lat = position.coords.latitude;
+//             let lon = position.coords.longitude;
+//             let now = frappe.datetime.now_datetime();
 
-            // ✅ CHECK IN
-            if (type === "check_in") {
+//             // ✅ CHECK IN
+//             if (type === "check_in") {
 
-                if (frm.doc.check_in_time) {
-                    frappe.msgprint("⚠️ Already Checked In");
-                    return;
-                }
+//                 if (frm.doc.check_in_time) {
+//                     frappe.msgprint("⚠️ Already Checked In");
+//                     return;
+//                 }
 
-                frm.set_value("check_in_time", now);
-                frm.set_value("check_in_latitude", lat);
-                frm.set_value("check_in_longitude", lon);
+//                 frm.set_value("check_in_time", now);
+//                 frm.set_value("check_in_latitude", lat);
+//                 frm.set_value("check_in_longitude", lon);
 
-                frappe.msgprint("✅ Check In Done");
-            }
+//                 frappe.msgprint("✅ Check In Done");
+//             }
 
-            // ✅ CHECK OUT
-            if (type === "check_out") {
+//             // ✅ CHECK OUT
+//             if (type === "check_out") {
 
-                if (!frm.doc.check_in_time) {
-                    frappe.msgprint("❌ Please Check In first");
-                    return;
-                }
+//                 if (!frm.doc.check_in_time) {
+//                     frappe.msgprint("❌ Please Check In first");
+//                     return;
+//                 }
 
-                if (frm.doc.check_out_time) {
-                    frappe.msgprint("⚠️ Already Checked Out");
-                    return;
-                }
+//                 if (frm.doc.check_out_time) {
+//                     frappe.msgprint("⚠️ Already Checked Out");
+//                     return;
+//                 }
 
-                frm.set_value("check_out_time", now);
-                frm.set_value("check_out_latitude", lat);
-                frm.set_value("check_out_longitude", lon);
+//                 frm.set_value("check_out_time", now);
+//                 frm.set_value("check_out_latitude", lat);
+//                 frm.set_value("check_out_longitude", lon);
 
-                frappe.msgprint("✅ Check Out Done");
-            }
+//                 frappe.msgprint("✅ Check Out Done");
+//             }
 
-            frm.save();
+//             frm.save();
 
-        },
+//         },
 
-        function(error) {
+//         function(error) {
 
-            if (error.code === 1) {
-                frappe.msgprint("❌ Please allow location access");
-            } else {
-                frappe.msgprint("❌ Location error");
-            }
-        }
-    );
-}
+//             if (error.code === 1) {
+//                 frappe.msgprint("❌ Please allow location access");
+//             } else {
+//                 frappe.msgprint("❌ Location error");
+//             }
+//         }
+//     );
+// }
 
 

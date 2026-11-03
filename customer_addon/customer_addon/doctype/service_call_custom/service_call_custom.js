@@ -452,19 +452,42 @@ frappe.ui.form.on("Service Call Custom", {
         setup_service_no_search(frm);
     },
     
+    // // AUTO-FILL TECHNICIAN
+    // onload(frm) {
+    //     if (frm.is_new() && !frm.doc.technician) {
+    //         const df = frm.fields_dict.technician?.df;
+
+    //         if (df?.fieldtype === "Link" && df.options === "User") {
+    //             frm.set_value("technician", frappe.session.user);
+    //         } else {
+    //             frm.set_value(
+    //                 "technician",
+    //                 frappe.session.user_fullname || frappe.session.user
+    //             );
+    //         }
+    //     }
+    // },
+
     // AUTO-FILL TECHNICIAN
     onload(frm) {
-        if (frm.is_new() && !frm.doc.technician) {
-            const df = frm.fields_dict.technician?.df;
 
-            if (df?.fieldtype === "Link" && df.options === "User") {
-                frm.set_value("technician", frappe.session.user);
-            } else {
-                frm.set_value(
-                    "technician",
-                    frappe.session.user_fullname || frappe.session.user
-                );
-            }
+        if (frm.is_new() && !frm.doc.technician) {
+
+            frappe.db.get_value(
+                "Employee",
+                { user_id: frappe.session.user },
+                "name"
+            ).then(r => {
+
+                if (r.message && r.message.name) {
+                    frm.set_value("technician", r.message.name);
+                } else {
+                    frappe.msgprint(
+                        "No Employee record is linked with the logged-in user."
+                    );
+                }
+
+            });
         }
     },
     // ======================================================

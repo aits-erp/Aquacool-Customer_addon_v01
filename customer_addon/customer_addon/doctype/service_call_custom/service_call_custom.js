@@ -451,7 +451,22 @@ frappe.ui.form.on("Service Call Custom", {
     setup(frm) {
         setup_service_no_search(frm);
     },
+    
+    // AUTO-FILL TECHNICIAN
+    onload(frm) {
+        if (frm.is_new() && !frm.doc.technician) {
+            const df = frm.fields_dict.technician?.df;
 
+            if (df?.fieldtype === "Link" && df.options === "User") {
+                frm.set_value("technician", frappe.session.user);
+            } else {
+                frm.set_value(
+                    "technician",
+                    frappe.session.user_fullname || frappe.session.user
+                );
+            }
+        }
+    },
     // ======================================================
     // BUTTONS
     // ======================================================
@@ -478,14 +493,31 @@ frappe.ui.form.on("Service Call Custom", {
     // SERVICE NO CHANGE
     // ======================================================
 
-    service_no(frm) {
+//     service_no(frm) {
 
-        if (!frm.doc.service_no) {
-            return;
-        }
+//         if (!frm.doc.service_no) {
+//             return;
+//         }
 
-        fetch_service_details(frm, frm.doc.service_no);
+//         fetch_service_details(frm, frm.doc.service_no);
+//     }
+// });
+
+
+service_no(frm) {
+
+    if (!frm.doc.service_no) {
+        return;
     }
+
+    if (frm._selected_service_no !== frm.doc.service_no) {
+        return;
+    }
+
+    fetch_service_details(frm, frm.doc.service_no);
+
+    frm._selected_service_no = null;
+}
 });
 
 
@@ -555,12 +587,22 @@ function setup_service_no_search(frm) {
         }, 300);
     });
 
-    input.addEventListener("awesomplete-selectcomplete", function (event) {
+    // input.addEventListener("awesomplete-selectcomplete", function (event) {
+
+    //     let selected_service_no = event.text.value;
+
+    //     // Setting the value triggers the service_no event.
+    //     // Do not call fetch_service_details separately here.
+    //     frm.set_value("service_no", selected_service_no);
+
+    // });
+
+        input.addEventListener("awesomplete-selectcomplete", function (event) {
 
         let selected_service_no = event.text.value;
 
-        // Setting the value triggers the service_no event.
-        // Do not call fetch_service_details separately here.
+        frm._selected_service_no = selected_service_no;
+
         frm.set_value("service_no", selected_service_no);
 
     });

@@ -283,7 +283,8 @@ def search_service_numbers(txt="", start=0, page_len=50):
         LIMIT %(start)s, %(page_len)s
 
     """, {
-        "txt": f"%{txt}%",
+        # "txt": f"%{txt}%",
+        "txt": f"{txt}%",
         "start": start,
         "page_len": page_len
     }, as_dict=True)

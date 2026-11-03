@@ -489,37 +489,67 @@ frappe.ui.form.on("Service Call Custom", {
         setup_service_no_search(frm);
     },
 
-    // ======================================================
-    // SERVICE NO CHANGE
-    // ======================================================
 
-//     service_no(frm) {
 
-//         if (!frm.doc.service_no) {
-//             return;
-//         }
+// service_no(frm) {
 
-//         fetch_service_details(frm, frm.doc.service_no);
+//     if (!frm.doc.service_no) {
+//         return;
 //     }
+
+//     if (frm._selected_service_no !== frm.doc.service_no) {
+//         return;
+//     }
+
+//     fetch_service_details(frm, frm.doc.service_no);
+
+//     frm._selected_service_no = null;
+// }
 // });
 
+    service_no(frm) {
 
-service_no(frm) {
+        if (!frm.doc.service_no) {
+            return;
+        }
 
-    if (!frm.doc.service_no) {
-        return;
+        let service_no = frm.doc.service_no.trim();
+
+        // Case 1: Selected from Awesomplete
+        if (frm._selected_service_no === service_no) {
+
+            frm._selected_service_no = null;
+
+            fetch_service_details(frm, service_no);
+
+            return;
+        }
+
+        // Case 2: Directly typed or pasted complete Service No
+        frappe.call({
+            method: "customer_addon.customer_addon.doctype.service_call_custom.service_call_custom.search_service_numbers",
+
+            args: {
+                txt: service_no,
+                start: 0,
+                page_len: 50
+            },
+
+            callback: function(r) {
+
+                let results = r.message || [];
+
+                let exact_match = results.find(
+                    d => d.service_no === service_no
+                );
+
+                if (exact_match) {
+                    fetch_service_details(frm, service_no);
+                }
+            }
+        });
     }
-
-    if (frm._selected_service_no !== frm.doc.service_no) {
-        return;
-    }
-
-    fetch_service_details(frm, frm.doc.service_no);
-
-    frm._selected_service_no = null;
-}
-});
-
+    });
 
 // ==========================================================
 // SERVICE NUMBER AUTOCOMPLETE

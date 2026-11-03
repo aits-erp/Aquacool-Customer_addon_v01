@@ -452,21 +452,7 @@ frappe.ui.form.on("Service Call Custom", {
         setup_service_no_search(frm);
     },
     
-    // // AUTO-FILL TECHNICIAN
-    // onload(frm) {
-    //     if (frm.is_new() && !frm.doc.technician) {
-    //         const df = frm.fields_dict.technician?.df;
-
-    //         if (df?.fieldtype === "Link" && df.options === "User") {
-    //             frm.set_value("technician", frappe.session.user);
-    //         } else {
-    //             frm.set_value(
-    //                 "technician",
-    //                 frappe.session.user_fullname || frappe.session.user
-    //             );
-    //         }
-    //     }
-    // },
+  
 // AUTO-FILL TECHNICIAN WITH USERNAME
 onload(frm) {
     if (frm.is_new() && !frm.doc.technician) {

@@ -56,9 +56,8 @@
   },
   {
    "fieldname": "technician",
-   "fieldtype": "Link",
-   "label": "Technician",
-   "options": "User"
+   "fieldtype": "Data",
+   "label": "Technician"
   },
   {
    "fieldname": "check_in_time",
@@ -122,7 +121,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-11-03 11:58:07.734193",
+ "modified": "2026-11-03 14:32:56.619665",
  "modified_by": "Administrator",
  "module": "customer addon",
  "name": "Service Call Custom",

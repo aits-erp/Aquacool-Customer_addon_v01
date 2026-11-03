@@ -467,27 +467,10 @@ frappe.ui.form.on("Service Call Custom", {
     //         }
     //     }
     // },
-
-    // AUTO-FILL TECHNICIAN
+// AUTO-FILL TECHNICIAN
     onload(frm) {
-
         if (frm.is_new() && !frm.doc.technician) {
-
-            frappe.db.get_value(
-                "Employee",
-                { user_id: frappe.session.user },
-                "name"
-            ).then(r => {
-
-                if (r.message && r.message.name) {
-                    frm.set_value("technician", r.message.name);
-                } else {
-                    frappe.msgprint(
-                        "No Employee record is linked with the logged-in user."
-                    );
-                }
-
-            });
+            frm.set_value("technician", frappe.session.user);
         }
     },
     // ======================================================

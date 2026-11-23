@@ -242,9 +242,56 @@ class ServiceCallCustom(Document):
                 )
 
 
-# ==========================================================
-# SEARCH SERVICE NUMBERS
-# ==========================================================
+# # ==========================================================
+# # SEARCH SERVICE NUMBERS
+# # ==========================================================
+
+# @frappe.whitelist()
+# def search_service_numbers(txt="", start=0, page_len=50):
+
+#     txt = (txt or "").strip()
+
+#     start = int(start or 0)
+#     page_len = min(int(page_len or 50), 100)
+
+#     results = frappe.db.sql("""
+#         SELECT
+#             sia.service_no,
+#             cms.customer,
+#             GROUP_CONCAT(
+#                 DISTINCT sia.location
+#                 ORDER BY sia.location
+#                 SEPARATOR ', '
+#             ) AS location
+
+#         FROM `tabSales Order Installed Asset` sia
+
+#         LEFT JOIN `tabCustom Maintenance Schedule` cms
+#             ON cms.name = sia.parent
+#             AND sia.parenttype = 'Custom Maintenance Schedule'
+
+#         WHERE
+#             IFNULL(sia.service_no, '') != ''
+#             AND sia.service_no LIKE %(txt)s
+
+#         GROUP BY
+#             sia.service_no,
+#             cms.customer
+
+#         ORDER BY sia.service_no DESC
+
+#         LIMIT %(start)s, %(page_len)s
+
+#     """, {
+#         # "txt": f"%{txt}%",
+#         "txt": f"{txt}%",
+#         "start": start,
+#         "page_len": page_len
+#     }, as_dict=True)
+
+#     return results
+
+
 
 @frappe.whitelist()
 def search_service_numbers(txt="", start=0, page_len=50):
@@ -253,6 +300,8 @@ def search_service_numbers(txt="", start=0, page_len=50):
 
     start = int(start or 0)
     page_len = min(int(page_len or 50), 100)
+
+    is_numeric = txt.isdigit()
 
     results = frappe.db.sql("""
         SELECT
@@ -272,7 +321,17 @@ def search_service_numbers(txt="", start=0, page_len=50):
 
         WHERE
             IFNULL(sia.service_no, '') != ''
-            AND sia.service_no LIKE %(txt)s
+            AND (
+                sia.service_no LIKE %(txt)s
+
+                OR (
+                    %(is_numeric)s = 1
+                    AND RIGHT(
+                        sia.service_no,
+                        CHAR_LENGTH(%(txt)s)
+                    ) = %(txt)s
+                )
+            )
 
         GROUP BY
             sia.service_no,
@@ -283,13 +342,14 @@ def search_service_numbers(txt="", start=0, page_len=50):
         LIMIT %(start)s, %(page_len)s
 
     """, {
-        # "txt": f"%{txt}%",
         "txt": f"{txt}%",
+        "is_numeric": 1 if is_numeric else 0,
         "start": start,
         "page_len": page_len
     }, as_dict=True)
 
     return results
+
 
 
 # ==========================================================

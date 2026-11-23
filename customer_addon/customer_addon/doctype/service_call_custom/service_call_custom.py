@@ -1,16 +1,23 @@
 # import frappe
 # from frappe.model.document import Document
-# from frappe.utils import getdate, nowdate
 
 
 # class ServiceCallCustom(Document):
 
+#     # ==========================================================
+#     # ON SUBMIT
+#     # ==========================================================
+
 #     def on_submit(self):
 #         self.create_stock_entries()
 
+#     # ==========================================================
+#     # CREATE OUTWARD / INWARD STOCK ENTRIES
+#     # ==========================================================
+
 #     def create_stock_entries(self):
 
-#         # 🔴 OUTWARD (Material Issue)
+#         # OUTWARD (Material Issue)
 #         if self.custom_product_outword:
 
 #             issue_entry = frappe.new_doc("Stock Entry")
@@ -30,14 +37,15 @@
 #                     "s_warehouse": row.source_warehouse
 #                 })
 
-#             # ✅ SAFE SUBMIT
 #             if issue_entry.get("items"):
 #                 issue_entry.insert(ignore_permissions=True)
 #                 issue_entry.submit()
-#                 frappe.msgprint(f"🔴 Outward Stock Entry: {issue_entry.name}")
 
+#                 frappe.msgprint(
+#                     f"Outward Stock Entry: {issue_entry.name}"
+#                 )
 
-#         # 🟢 INWARD (Material Receipt)
+#         # INWARD (Material Receipt)
 #         if self.custom_product_inword:
 
 #             receipt_entry = frappe.new_doc("Stock Entry")
@@ -57,111 +65,360 @@
 #                     "t_warehouse": row.target_warehouse
 #                 })
 
-#             # ✅ SAFE SUBMIT
 #             if receipt_entry.get("items"):
 #                 receipt_entry.insert(ignore_permissions=True)
 #                 receipt_entry.submit()
-#                 frappe.msgprint(f"🟢 Inward Stock Entry: {receipt_entry.name}")
+
+#                 frappe.msgprint(
+#                     f"Inward Stock Entry: {receipt_entry.name}"
+#                 )
 
 
-# # 🔍 SERVICE NO DROPDOWN
+# # # ==========================================================
+# # # SEARCH SERVICE NUMBERS
+# # # ==========================================================
+
+# # @frappe.whitelist()
+# # def search_service_numbers(txt="", start=0, page_len=50):
+
+# #     txt = (txt or "").strip()
+
+# #     start = int(start or 0)
+# #     page_len = min(int(page_len or 50), 100)
+
+# #     results = frappe.db.sql("""
+# #         SELECT
+# #             sia.service_no,
+# #             cms.customer,
+# #             GROUP_CONCAT(
+# #                 DISTINCT sia.location
+# #                 ORDER BY sia.location
+# #                 SEPARATOR ', '
+# #             ) AS location
+
+# #         FROM `tabSales Order Installed Asset` sia
+
+# #         LEFT JOIN `tabCustom Maintenance Schedule` cms
+# #             ON cms.name = sia.parent
+# #             AND sia.parenttype = 'Custom Maintenance Schedule'
+
+# #         WHERE
+# #             IFNULL(sia.service_no, '') != ''
+# #             AND sia.service_no LIKE %(txt)s
+
+# #         GROUP BY
+# #             sia.service_no,
+# #             cms.customer
+
+# #         ORDER BY sia.service_no DESC
+
+# #         LIMIT %(start)s, %(page_len)s
+
+# #     """, {
+# #         # "txt": f"%{txt}%",
+# #         "txt": f"{txt}%",
+# #         "start": start,
+# #         "page_len": page_len
+# #     }, as_dict=True)
+
+# #     return results
+
+
+
 # @frappe.whitelist()
-# @frappe.validate_and_sanitize_search_inputs
-# def get_service_no(doctype, txt, searchfield, start, page_len, filters):
+# def search_service_numbers(txt="", start=0, page_len=50):
 
-#     return frappe.db.sql("""
-#         SELECT 
-#             name,
-#             CONCAT(service_no, ' | ', location) AS description
-#         FROM `tabSales Order Installed Asset`
-#         WHERE service_no LIKE %(txt)s
-#         ORDER BY service_no DESC
+#     txt = (txt or "").strip()
+
+#     start = int(start or 0)
+#     page_len = min(int(page_len or 50), 100)
+
+#     is_numeric = txt.isdigit()
+
+#     results = frappe.db.sql("""
+#         SELECT
+#             sia.service_no,
+#             cms.customer,
+#             GROUP_CONCAT(
+#                 DISTINCT sia.location
+#                 ORDER BY sia.location
+#                 SEPARATOR ', '
+#             ) AS location
+
+#         FROM `tabSales Order Installed Asset` sia
+
+#         LEFT JOIN `tabCustom Maintenance Schedule` cms
+#             ON cms.name = sia.parent
+#             AND sia.parenttype = 'Custom Maintenance Schedule'
+
+#         WHERE
+#             IFNULL(sia.service_no, '') != ''
+#             AND (
+#                 sia.service_no LIKE %(txt)s
+
+#                 OR (
+#                     %(is_numeric)s = 1
+#                     AND RIGHT(
+#                         sia.service_no,
+#                         CHAR_LENGTH(%(txt)s)
+#                     ) = %(txt)s
+#                 )
+#             )
+
+#         GROUP BY
+#             sia.service_no,
+#             cms.customer
+
+#         ORDER BY sia.service_no DESC
+
 #         LIMIT %(start)s, %(page_len)s
+
 #     """, {
-#         "txt": f"%{txt}%",
+#         "txt": f"{txt}%",
+#         "is_numeric": 1 if is_numeric else 0,
 #         "start": start,
-#         "page_len": page_len or 50
-#     })
+#         "page_len": page_len
+#     }, as_dict=True)
+
+#     return results
 
 
-# # 🔥 GET SERVICE DETAILS (ONLY CUSTOMER FIXED)
+
+# # ==========================================================
+# # GET SERVICE DETAILS USING ACTUAL SERVICE NUMBER
+# # ==========================================================
+
 # @frappe.whitelist()
 # def get_service_details(service_no):
 
 #     if not service_no:
 #         return {}
 
-#     asset = frappe.get_doc("Sales Order Installed Asset", service_no)
+#     print("\n========== SERVICE DETAILS FETCH ==========")
+#     print("Selected Service No:", service_no)
 
-#     today = getdate(nowdate())
+#     # ------------------------------------------------------
+#     # FETCH ALL MATCHING SALES ORDER INSTALLED ASSET ROWS
+#     # ------------------------------------------------------
 
-#     start_of_month = today.replace(day=1)
+#     asset_meta = frappe.get_meta("Sales Order Installed Asset")
 
-#     if today.month == 12:
-#         end_of_month = today.replace(year=today.year + 1, month=1, day=1)
-#     else:
-#         end_of_month = today.replace(month=today.month + 1, day=1)
+#     fields = [
+#         "name",
+#         "item_code",
+#         "service_no",
+#         "location",
+#         "sub_location",
+#         "address",
+#         "item_group",
+#         "model",
+#         "type",
+#         "capacity",
+#         "amc",
+#         "start_date",
+#         "end_date",
+#         "warrenty",
+#         "warranty_date",
+#         "parent",
+#         "parenttype"
+#     ]
 
-#     # 🔥 TRY CURRENT MONTH
+#     # Fetch description only if the source DocType has this field
+#     if asset_meta.has_field("description"):
+#         fields.append("description")
+
+#     # # Fetch only fields available in the source DocType
+#     # fields = [
+#     #     field for field in fields
+#     #     if field == "name" or asset_meta.has_field(field)
+#     # ]
+
+#     fields = [
+#         field for field in fields
+#         if field in ("name", "parent", "parenttype", "parentfield")
+#         or asset_meta.has_field(field)
+#     ]
+
 #     assets = frappe.get_all(
 #         "Sales Order Installed Asset",
 #         filters={
-#             "service_no": asset.service_no,
-#             "start_date": ["between", [start_of_month, end_of_month]]
+#             "service_no": service_no
 #         },
-#         fields=[
-#             "item_code",
-#             "service_no as serial_no",
-#             "location",
-#             "start_date",
-#             "parent",
-#             "parenttype",
-#             "service_no"
-#         ],
+#         fields=fields,
 #         order_by="start_date asc"
 #     )
 
-#     # 🔁 FALLBACK
 #     if not assets:
-#         assets = frappe.get_all(
-#             "Sales Order Installed Asset",
-#             filters={
-#                 "service_no": asset.service_no
-#             },
-#             fields=[
-#                 "item_code",
-#                 "service_no as serial_no",
-#                 "location",
-#                 "start_date",
-#                 "parent",
-#                 "parenttype",
-#                 "service_no"
-#             ],
-#             order_by="start_date asc",
-#             limit_page_length=1
+#         frappe.throw(
+#             f"No Sales Order Installed Asset found for {service_no}"
 #         )
 
-#     if not assets:
-#         return {}
+#     # ------------------------------------------------------
+#     # CHECK PARENT CONSISTENCY
+#     # ------------------------------------------------------
 
-#     # 🔥 CUSTOMER SAFE FETCH (MAIN FIX)
+#     parents = list(set(
+#         (row.parenttype, row.parent)
+#         for row in assets
+#         if row.parent and row.parenttype
+#     ))
+
+#     print("DEBUG SERVICE NO:", service_no)
+#     print("DEBUG ASSETS:", assets)
+#     print("DEBUG UNIQUE PARENTS:", parents)
+#     print("DEBUG PARENT COUNT:", len(parents))
+
+#     if len(parents) != 1:
+#         frappe.throw(
+#             f"Service No {service_no} belongs to multiple "
+#             "Maintenance Schedules or has invalid parent mapping. "
+#             "Please verify the Service No."
+#         )
+
+#     parenttype, parent = parents[0]
+
+#     print("Parent Type:", parenttype)
+#     print("Parent Document:", parent)
+
+#     # ------------------------------------------------------
+#     # FETCH CUSTOMER FROM PARENT SCHEDULE
+#     # ------------------------------------------------------
+
 #     customer = None
 
-#     if assets[0].parent and assets[0].parenttype:
+#     if frappe.get_meta(parenttype).has_field("customer"):
+
 #         customer = frappe.db.get_value(
-#             assets[0].parenttype,   # 🔥 MOST IMPORTANT FIX
-#             assets[0].parent,
+#             parenttype,
+#             parent,
 #             "customer"
 #         )
 
-#     frappe.msgprint(f"Customer Found: {customer}")
+#     print("Customer Found:", customer)
 
-#     return {
+#     # ------------------------------------------------------
+#     # PREPARE SERVICE CALL CHILD TABLE ITEMS
+#     # ------------------------------------------------------
+
+#     items = []
+
+#     for asset in assets:
+
+#         if not asset.item_code:
+#             continue
+
+#         # ----------------------------------------------
+#         # FETCH SUB LOCATION
+#         # Customer Location.description
+#         # ----------------------------------------------
+
+#         sub_location = ""
+
+#         if asset.location:
+
+#             sub_location = frappe.db.get_value(
+#                 "Customer Location",
+#                 asset.location,
+#                 "description"
+#             ) or ""
+
+#         # ----------------------------------------------
+#         # FETCH ADDRESS
+#         # Customer Installed Asset.address
+#         # ----------------------------------------------
+
+#         address = ""
+
+#         if customer and asset.item_code and asset.location:
+
+#             address = frappe.db.get_value(
+#                 "Customer Installed Asset",
+#                 {
+#                     "parent": customer,
+#                     "parenttype": "Customer",
+#                     "parentfield": "custom_customer_installed_assets",
+#                     "custom_item_code": asset.item_code,
+#                     "location": asset.location
+#                 },
+#                 "address"
+#             ) or ""
+
+#         # ----------------------------------------------
+#         # FETCH ITEM DESCRIPTION
+#         # ----------------------------------------------
+
+#         description = (
+#             asset.get("description")
+#             or frappe.db.get_value(
+#                 "Item",
+#                 asset.item_code,
+#                 "description"
+#             )
+#             or ""
+#         )
+
+#         # ----------------------------------------------
+#         # APPEND CHILD TABLE ROW
+#         # ----------------------------------------------
+
+#         items.append({
+
+#             "item_code": asset.item_code,
+
+#             # Actual Service No stored in serial_no
+#             "serial_no": asset.service_no,
+
+#             "description": description,
+
+#             "start_date": asset.start_date,
+
+#             "location": asset.location,
+
+#             "sub_location": sub_location,
+
+#             "address": address,
+
+#             "item_group": asset.get("item_group"),
+
+#             "model": asset.get("model"),
+
+#             "type": asset.get("type"),
+
+#             "capacity": asset.get("capacity"),
+
+#             "amc": asset.get("amc"),
+
+#             "end_date": asset.get("end_date"),
+
+#             # Source: warrenty
+#             # Target: warranty
+#             "warranty": asset.get("warrenty"),
+
+#             "warranty_date": asset.get("warranty_date")
+#         })
+
+#     # ------------------------------------------------------
+#     # PARENT LOCATION
+#     # ------------------------------------------------------
+
+#     location = assets[0].location
+
+#     # ------------------------------------------------------
+#     # FINAL RESPONSE
+#     # ------------------------------------------------------
+
+#     result = {
+#         "service_no": service_no,
 #         "customer": customer,
-#         "service_no_display": assets[0].service_no,
-#         "location": assets[0].location,
-#         "items": assets
+#         "location": location,
+#         "items": items
 #     }
+
+#     print("Total Matching Items:", len(items))
+#     print("========== SERVICE DETAILS COMPLETED ==========\n")
+
+#     return result
+
 
 
 
@@ -242,56 +499,10 @@ class ServiceCallCustom(Document):
                 )
 
 
-# # ==========================================================
-# # SEARCH SERVICE NUMBERS
-# # ==========================================================
-
-# @frappe.whitelist()
-# def search_service_numbers(txt="", start=0, page_len=50):
-
-#     txt = (txt or "").strip()
-
-#     start = int(start or 0)
-#     page_len = min(int(page_len or 50), 100)
-
-#     results = frappe.db.sql("""
-#         SELECT
-#             sia.service_no,
-#             cms.customer,
-#             GROUP_CONCAT(
-#                 DISTINCT sia.location
-#                 ORDER BY sia.location
-#                 SEPARATOR ', '
-#             ) AS location
-
-#         FROM `tabSales Order Installed Asset` sia
-
-#         LEFT JOIN `tabCustom Maintenance Schedule` cms
-#             ON cms.name = sia.parent
-#             AND sia.parenttype = 'Custom Maintenance Schedule'
-
-#         WHERE
-#             IFNULL(sia.service_no, '') != ''
-#             AND sia.service_no LIKE %(txt)s
-
-#         GROUP BY
-#             sia.service_no,
-#             cms.customer
-
-#         ORDER BY sia.service_no DESC
-
-#         LIMIT %(start)s, %(page_len)s
-
-#     """, {
-#         # "txt": f"%{txt}%",
-#         "txt": f"{txt}%",
-#         "start": start,
-#         "page_len": page_len
-#     }, as_dict=True)
-
-#     return results
-
-
+# ==========================================================
+# SEARCH SERVICE NUMBERS
+# Supports full Service No and numeric suffix search
+# ==========================================================
 
 @frappe.whitelist()
 def search_service_numbers(txt="", start=0, page_len=50):
@@ -328,8 +539,8 @@ def search_service_numbers(txt="", start=0, page_len=50):
                     %(is_numeric)s = 1
                     AND RIGHT(
                         sia.service_no,
-                        CHAR_LENGTH(%(txt)s)
-                    ) = %(txt)s
+                        CHAR_LENGTH(%(numeric_txt)s)
+                    ) = %(numeric_txt)s
                 )
             )
 
@@ -343,13 +554,13 @@ def search_service_numbers(txt="", start=0, page_len=50):
 
     """, {
         "txt": f"{txt}%",
+        "numeric_txt": txt,
         "is_numeric": 1 if is_numeric else 0,
         "start": start,
         "page_len": page_len
     }, as_dict=True)
 
     return results
-
 
 
 # ==========================================================
@@ -395,12 +606,7 @@ def get_service_details(service_no):
     if asset_meta.has_field("description"):
         fields.append("description")
 
-    # # Fetch only fields available in the source DocType
-    # fields = [
-    #     field for field in fields
-    #     if field == "name" or asset_meta.has_field(field)
-    # ]
-
+    # Fetch only fields available in the source DocType
     fields = [
         field for field in fields
         if field in ("name", "parent", "parenttype", "parentfield")
